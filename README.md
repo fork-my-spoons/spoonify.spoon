@@ -1,4 +1,4 @@
-# Spoonify
+# Spotify
 
 ![screenshot](./screenshot.png)
 
