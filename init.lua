@@ -24,7 +24,7 @@ function refreshWidget()
 end
 
 function obj:next()
-    hs.spotify.next() 
+    hs.spotify.next()
     refreshWidget()
 end
 
