@@ -2,10 +2,10 @@ local obj = {}
 obj.__index = obj
 
 -- Metadata
-obj.name = "Spoonify"
+obj.name = "spotify"
 obj.version = "1.0"
 obj.author = "Pavel Makhov"
-obj.homepage = "https://github.com/streetturtle/spoonify"
+obj.homepage = "https://github.com/fork-my-spoons/spotify.spoon"
 obj.license = "MIT - https://opensource.org/licenses/MIT"
 
 obj.spotify_indicator = nil
