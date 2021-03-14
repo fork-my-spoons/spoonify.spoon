@@ -14,6 +14,13 @@ obj.iconPath = hs.spoons.resourcePath("icons")
 obj.playIcon = nil
 obj.pauseIcon = nil
 
+local artist_icon = hs.styledtext.new(' ', { font = {name = 'feather', size = 12 }, color = {hex = '#1d8954'}})
+local album_icon = hs.styledtext.new(' ', { font = {name = 'feather', size = 12 }, color = {hex = '#1d8954'}})
+local track_icon = hs.styledtext.new(' ', { font = {name = 'feather', size = 12 }, color = {hex = '#1d8954'}})
+local skip_icon = hs.styledtext.new(' ', { font = {name = 'feather', size = 12 }, color = {hex = '#1d8954'}})
+local play_icon = hs.styledtext.new(' ', { font = {name = 'feather', size = 12 }, color = {hex = '#1d8954'}})
+local pause_icon = hs.styledtext.new(' ', { font = {name = 'feather', size = 12 }, color = {hex = '#1d8954'}})
+
 function refreshWidget()
     if (hs.spotify.isPlaying()) then
         obj.spotify_indicator:setIcon(obj.playIcon, false)
@@ -38,14 +45,42 @@ function obj:playpause()
     refreshWidget()
 end
 
+local function pos()
+    return string.rep("a", math.floor(hs.spotify.getPosition() / hs.spotify.getDuration() * 40))
+end
+
+local function buildMenu()
+    _, img, _ = hs.osascript.javascript("Application('Spotify').currentTrack().artworkUrl()")
+    local i = hs.spotify.isPlaying() and play_icon or pause_icon 
+    return {
+        {
+            -- disabled = true,
+            image = hs.image.imageFromURL(img):setSize({w=128,h=128}),
+            title = artist_icon .. hs.styledtext.new(hs.spotify.getCurrentArtist() .. '\n')
+                .. album_icon .. hs.styledtext.new(hs.spotify.getCurrentTrack() .. '\n')
+                .. track_icon .. hs.styledtext.new(hs.spotify.getCurrentAlbum()),
+            fn = hs.spotify.playpause
+
+        },
+        { 
+            disabled = true,
+            title = i
+            .. hs.styledtext.new(string.rep("•", math.floor(hs.spotify.getPosition() / hs.spotify.getDuration() * 40)), {color = {hex = '#ffff00'}}) .. 
+            hs.styledtext.new(string.rep("•", 40 - math.floor(hs.spotify.getPosition() / hs.spotify.getDuration() * 40)))
+        }
+    }
+end
+
 function obj:init(par)
     self.spotify_indicator = hs.menubar.new()
     self.playIcon = hs.image.imageFromPath(obj.iconPath .. '/Spotify_Icon_RGB_Green.png'):setSize({w=16,h=16})
     self.pauseIcon = hs.image.imageFromPath(obj.iconPath .. '/Spotify_Icon_RGB_White.png'):setSize({w=16,h=16})
-    self.spotify_indicator:setClickCallback(function() 
-        hs.spotify.playpause() 
-        refreshWidget()
-    end)
+    -- self.spotify_indicator:setClickCallback(function() 
+    --     hs.spotify.playpause() 
+    --     refreshWidget()
+    -- end)
+
+    self.spotify_indicator:setMenu(buildMenu)
     self.timer = hs.timer.new(1, refreshWidget)
 end
 
